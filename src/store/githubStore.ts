@@ -137,6 +137,15 @@ export const useGitHubStore = defineStore('github', {
       this.error = null
     },
 
+    resetCommits() {
+      this.commits = []
+      this.currentPage = 1
+      this.hasMoreCommits = true
+    },
+
+    clearSelectedCommitDetails() {
+      this.selectedCommitDetails = null
+    },
   }
 });
 
