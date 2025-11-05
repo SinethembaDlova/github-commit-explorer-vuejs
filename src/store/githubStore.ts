@@ -61,6 +61,31 @@ export const useGitHubStore = defineStore('github', {
         this.loading = false
       }
     },
+
+    async fetchCommits(username: string, repoName: string, page = 1) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const newCommits = await githubApi.fetchRepositoryCommits(
+          username,
+          repoName,
+          page,
+          10
+        )
+
+        const hasMore = newCommits.length === 10
+        this.commits =
+          page === 1 ? newCommits : [...this.commits, ...newCommits]
+        this.currentPage = page
+        this.hasMoreCommits = hasMore
+      } catch (error) {
+        this.error =
+          error instanceof Error ? error.message : 'Failed to fetch commits'
+      } finally {
+        this.loading = false
+      }
+    },
   }
 });
 
