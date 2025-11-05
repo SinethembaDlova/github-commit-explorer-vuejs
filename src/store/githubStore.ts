@@ -86,6 +86,24 @@ export const useGitHubStore = defineStore('github', {
         this.loading = false
       }
     },
+
+    async fetchCommitDetails(username: string, repoName: string, sha: string) {
+      this.loading = true
+      this.error = null
+      try {
+        const details = await githubApi.fetchCommitDetails(username, repoName, sha)
+        this.selectedCommitDetails = details
+      } catch (error) {
+        this.error =
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch commit details'
+      } finally {
+        this.loading = false
+      }
+    },
+
+    
   }
 });
 
