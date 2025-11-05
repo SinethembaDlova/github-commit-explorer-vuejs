@@ -43,6 +43,24 @@ export const useGitHubStore = defineStore('github', {
         JSON.stringify(this.favorites)
       )
     },
+
+    async fetchRepositories(username: string) {
+      this.loading = true
+      this.error = null
+      this.repositories = []
+
+      try {
+        const repos = await githubApi.fetchUserRepositories(username)
+        this.repositories = repos
+      } catch (error) {
+        this.error =
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch repositories'
+      } finally {
+        this.loading = false
+      }
+    },
   }
 });
 
