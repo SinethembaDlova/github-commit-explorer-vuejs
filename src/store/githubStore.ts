@@ -125,6 +125,18 @@ export const useGitHubStore = defineStore('github', {
       this.persistFavorites()
     },
 
+    setSelectedRepo(repo: Repository | null) {
+      this.selectedRepo = repo
+    },
+
+    setSortOrder(order: SortOrder) {
+      this.sortOrder = order
+    },
+
+    clearError() {
+      this.error = null
+    },
+
   }
 });
 
