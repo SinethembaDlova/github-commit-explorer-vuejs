@@ -35,4 +35,14 @@ export const useGitHubStore = defineStore('github', {
     loading: false,
     error: null,
   }),
-})
+
+  actions: {
+    persistFavorites() {
+      localStorage.setItem(
+        'github-favorites-storage',
+        JSON.stringify(this.favorites)
+      )
+    },
+  }
+});
+
