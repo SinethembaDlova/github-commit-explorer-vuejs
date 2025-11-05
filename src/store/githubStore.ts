@@ -103,7 +103,28 @@ export const useGitHubStore = defineStore('github', {
       }
     },
 
-    
+    addFavorite(commit: Commit, repoName: string, username: string) {
+      const favorite: FavoriteCommit = {
+        sha: commit.sha,
+        message: commit.commit.message,
+        author: commit.commit.author.name,
+        date: commit.commit.author.date,
+        repoName,
+        username,
+        avatarUrl: commit.author?.avatar_url,
+      }
+
+      if (!this.favorites.some((fav) => fav.sha === commit.sha)) {
+        this.favorites.push(favorite)
+        this.persistFavorites()
+      }
+    },
+
+    removeFavorite(sha: string) {
+      this.favorites = this.favorites.filter((fav) => fav.sha !== sha)
+      this.persistFavorites()
+    },
+
   }
 });
 
