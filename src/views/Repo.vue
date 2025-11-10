@@ -1,12 +1,12 @@
-<template>
-  <Navbar :username/>
-  <h1>Repo for {{ username }}</h1>
-</template>
+<script setup>
+  import { computed, onMounted, watch } from 'vue'
+  import { useRoute } from 'vue-router'
+  import { useGitHubStore } from '@/store/githubStore'
 
-<script setup lang="ts">
-  import { useRoute } from 'vue-router';
-  import Navbar from '../components/Navbar.vue';
+  // Get route and store
+  const route = useRoute()
+  const githubStore = useGitHubStore()
 
-  const route = useRoute();
-  const username = route.params.username;
+  // Get username from route params
+  const username = computed(() => route.params.username)
 </script>

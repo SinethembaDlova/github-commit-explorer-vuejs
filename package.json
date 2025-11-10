@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-icons/vue": "^1.0.0",
     "@tailwindcss/vite": "^4.1.16",
     "lucide-vue-next": "^0.552.0",
     "pinia": "^3.0.3",
