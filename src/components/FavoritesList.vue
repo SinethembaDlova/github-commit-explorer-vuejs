@@ -36,7 +36,7 @@
               <div class="flex items-start justify-between gap-2 sm:gap-2.5 md:gap-3 mb-1.5 sm:mb-2 md:mb-3">
                 <div class="flex-1 min-w-0">
                   <p class="text-[11px] sm:text-xs md:text-sm mb-1 sm:mb-1.5 md:mb-2 break-words line-clamp-2 text-foreground leading-snug">
-                    {{ favorite.message.split('\n')[0] }}
+                    {{ favorite?.message?.split('\n')[0] }}
                   </p>
                   
                   <div class="flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground">
