@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen">
     <!-- Header -->
-    <Navbar
+    <NavBar
       :title="`${username}'s Repositories`"
       subtitle="Explore commits and manage favorites"
       :show-back-button="true"
@@ -66,17 +66,50 @@
                   </span>
                 </div>
                 <SelectRoot v-if="selectedRepo && commits.length > 0" v-model="sortOrder">
-                  <SelectTrigger class="inline-flex items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[100px] sm:w-[110px] md:w-[140px] h-7 sm:h-8 text-[10px] sm:text-xs">
+                  <SelectTrigger class="inline-flex items-center justify-between rounded-md border border-white/20 bg-background text-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[100px] sm:w-[110px] md:w-[140px] h-7 sm:h-8 text-[10px] sm:text-xs gap-2 hover:border-white/40 transition-colors">
                     <SelectValue placeholder="Sort order" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 opacity-50 shrink-0">
+                      <path d="m6 9 6 6 6-6"/>
+                    </svg>
                   </SelectTrigger>
-                  <SelectContent class="relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md">
-                    <SelectItem value="newest" class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-xs sm:text-sm outline-none focus:bg-accent focus:text-accent-foreground">
-                      Newest First
-                    </SelectItem>
-                    <SelectItem value="oldest" class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-xs sm:text-sm outline-none focus:bg-accent focus:text-accent-foreground">
-                      Oldest First
-                    </SelectItem>
-                  </SelectContent>
+                  <SelectPortal>
+                    <SelectContent 
+                      class="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-white/20 bg-popover text-white shadow-md"
+                      :position="'popper'"
+                      :side="'bottom'"
+                      :align="'end'"
+                      :side-offset="4"
+                    >
+                      <SelectViewport class="p-1">
+                        <SelectItem 
+                          value="newest" 
+                          class="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent text-white"
+                        >
+                          <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                            <SelectItemIndicator>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                <path d="M20 6 9 17l-5-5"/>
+                              </svg>
+                            </SelectItemIndicator>
+                          </span>
+                          <SelectItemText>Newest First</SelectItemText>
+                        </SelectItem>
+                        <SelectItem 
+                          value="oldest" 
+                          class="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent text-white"
+                        >
+                          <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                            <SelectItemIndicator>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                <path d="M20 6 9 17l-5-5"/>
+                              </svg>
+                            </SelectItemIndicator>
+                          </span>
+                          <SelectItemText>Oldest First</SelectItemText>
+                        </SelectItem>
+                      </SelectViewport>
+                    </SelectContent>
+                  </SelectPortal>
                 </SelectRoot>
               </div>
             </div>
