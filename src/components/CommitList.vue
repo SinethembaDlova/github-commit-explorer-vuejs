@@ -27,20 +27,20 @@
             
             <div class="flex-1 min-w-0">
               <p class="text-[11px] sm:text-xs md:text-sm mb-1 sm:mb-1.5 md:mb-2 break-words line-clamp-2 text-foreground leading-snug">
-                {{ commit.commit.message.split('\n')[0] }}
+                {{ commit.commit.message?.split('\n')[0] || 'No message' }}
               </p>
               
               <div class="flex flex-wrap items-center gap-2 text-[10px] sm:text-xs text-muted-foreground">
                 <div class="flex items-center gap-1">
                   <User class="w-3 h-3" />
-                  <span class="truncate max-w-[120px]">{{ commit.commit.author.name }}</span>
+                  <span class="truncate max-w-[120px]">{{ commit.commit.author?.name || 'Unknown' }}</span>
                 </div>
                 <div class="flex items-center gap-1">
                   <Calendar class="w-3 h-3" />
-                  <span>{{ formatDate(commit.commit.author.date) }}</span>
+                  <span>{{ commit.commit.author?.date ? formatDate(commit.commit.author.date) : 'Unknown date' }}</span>
                 </div>
                 <span class="inline-flex items-center rounded bg-muted/80 px-2 py-0.5 text-[10px] font-mono">
-                  {{ commit.sha.substring(0, 7) }}
+                  {{ commit.sha?.substring(0, 7) || 'N/A' }}
                 </span>
               </div>
             </div>
@@ -96,6 +96,8 @@
 	import { computed } from 'vue';
 	import { Heart, Info, Calendar, User } from 'lucide-vue-next';
 	import type { Commit, SortOrder } from '../types/github';
+  import { formatDate } from '../utils/date';
+
 
 	const props = defineProps<{
   	commits: Commit[];
@@ -122,16 +124,4 @@
     	return props.sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
   	});
 	});
-
-	// Format date for display
- 	const formatDate = (dateString: string) => {
-  	const date = new Date(dateString);
-   	return new Intl.DateTimeFormat('en-US', {
-    	month: 'short',
-    	day: 'numeric',
-    	year: 'numeric',
-    	hour: '2-digit',
-    	minute: '2-digit',
-  	}).format(date);
-	};
 </script>
