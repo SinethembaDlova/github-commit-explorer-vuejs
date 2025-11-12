@@ -5,9 +5,19 @@
         <h3 class="text-sm sm:text-base md:text-lg font-semibold tracking-tight">
           Favorite Commits
         </h3>
-        <span class="inline-flex items-center rounded-md bg-secondary px-1.5 sm:px-2.5 py-0.5 text-[10px] sm:text-xs font-semibold text-secondary-foreground ml-1.5 sm:ml-2">
-          {{ favorites.length }}
-        </span>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center rounded-md bg-secondary px-1.5 sm:px-2.5 py-0.5 text-[10px] sm:text-xs font-semibold text-secondary-foreground">
+            {{ favorites.length }}
+          </span>
+          <button
+            @click="$emit('clearAll')"
+            class="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-destructive/10 text-destructive h-7 px-2"
+            title="Clear all favorites"
+          >
+            <Trash2 class="w-3 h-3 mr-1" />
+            Clear All
+          </button>
+        </div>
       </div>
       <h3 v-else class="text-sm sm:text-base md:text-lg font-semibold tracking-tight">
         Favorite Commits
@@ -52,7 +62,7 @@
                   
                   <div class="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground">
                     <GitBranch class="w-3 h-3" />
-                    <span class="truncate">{{ favorite.repoName || 'Unknown repo' }}</span>
+                    <span class="truncate">{{ favorite.username }}/{{ favorite.repoName }}</span>
                   </div>
                 </div>
                 
@@ -77,15 +87,32 @@
 </template>
 
 <script setup lang="ts">
-	import { Heart, Trash2, Calendar, User, GitBranch } from 'lucide-vue-next';
-	import type { FavoriteCommit } from '../types/github';
-  import { formatDate } from '../utils/date';
+  import { Heart, Trash2, Calendar, User, GitBranch } from 'lucide-vue-next';
+  import type { FavoriteCommit } from '../types/github';
 
-	defineProps<{
-  	favorites: FavoriteCommit[];
-	}>();
+  defineProps<{
+    favorites: FavoriteCommit[];
+  }>();
 
-	defineEmits<{
-  	removeFavorite: [sha: string];
-	}>();
+  defineEmits<{
+    removeFavorite: [sha: string];
+    clearAll: [];
+  }>();
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Invalid date';
+      }
+      return new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }).format(date);
+    } catch (error) {
+      return 'Invalid date';
+    }
+  };
 </script>

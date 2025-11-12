@@ -121,6 +121,7 @@
           <FavoritesList
             :favorites="favorites"
             @remove-favorite="removeFavorite"
+            @clear-all="clearAllFavorites"
           />
         </div>
       </div>
@@ -137,7 +138,7 @@
 
 <script setup lang="ts">
   import { computed, watch } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router'; 
   import { AlertCircle } from 'lucide-vue-next';
   import {
     SelectRoot,
@@ -152,9 +153,11 @@
   import RepositoryList from '../components/RepositoryList.vue';
   import CommitList from '../components/CommitList.vue';
   import FavoritesList from '../components/FavoritesList.vue';
+  // import CommitDetails from '../components/CommitDetails.vue';
   import type { Repository, Commit, SortOrder } from '../types/github';
 
   const route = useRoute();
+  const router = useRouter();
   const githubStore = useGitHubStore();
 
   // Get reactive state from store
@@ -183,6 +186,7 @@
     clearError,
     resetCommits,
     clearSelectedCommitDetails,
+    clearAllFavorites,
   } = githubStore;
 
   // Get username from route params
