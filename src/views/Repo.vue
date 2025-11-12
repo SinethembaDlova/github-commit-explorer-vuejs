@@ -1,79 +1,104 @@
-<script setup>
-  import { computed, onMounted, watch } from 'vue'
-  import { useRoute } from 'vue-router'
-  import { useGitHubStore } from '@/store/githubStore'
+<template>
+  <div class="dark min-h-screen">
+    <!-- Header -->
+    <Navbar
+      :title="`${username}'s Repositories`"
+      subtitle="Explore commits and manage favorites"
+      :show-back-button="true"
+      back-to="/"
+    />
+  </div>
+</template>
 
-  // Get route and store
-  const route = useRoute()
-  const githubStore = useGitHubStore()
+<script setup lang="ts">
+  import { computed, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import { useGitHubStore } from '../store/githubStore';
+  import { storeToRefs } from 'pinia';
+  import Navbar from '../components/Navbar.vue';
+  import type { Repository, Commit, SortOrder } from '../types/github';
+
+  const route = useRoute();
+  const router = useRouter();
+  const githubStore = useGitHubStore();
+
+  // Get reactive state from store
+  const {
+    repositories,
+    commits,
+    favorites,
+    selectedRepo,
+    selectedCommitDetails,
+    currentPage,
+    hasMoreCommits,
+    sortOrder,
+    loading,
+    error,
+  } = storeToRefs(githubStore);
+
+  // Get actions from store
+  const {
+    fetchRepositories,
+    fetchCommits,
+    fetchCommitDetails,
+    addFavorite,
+    removeFavorite,
+    setSelectedRepo,
+    setSortOrder,
+    clearError,
+    resetCommits,
+    clearSelectedCommitDetails,
+  } = githubStore;
 
   // Get username from route params
-  const username = computed(() => route.params.username)
+  const username = computed(() => route.params.username as string);
 
-  // Computed
+  // Create a set of favorite commit SHAs for quick lookup
   const favoriteIds = computed(() => {
-    return new Set(githubStore.favorites.map(f => f.sha))
-  })
+    return new Set(favorites.value.map(fav => fav.sha));
+  });
 
-  const sortedCommits = computed(() => {
-    const sorted = [...githubStore.commits]
-    if (githubStore.sortOrder === 'oldest') {
-      sorted.reverse()
+  // Fetch repositories when component mounts or username changes
+  watch(username, (newUsername) => {
+    if (newUsername) {
+      fetchRepositories(newUsername);
+      resetCommits();
+      setSelectedRepo(null);
     }
-    return sorted
-  })
+  }, { immediate: true });
 
-  // Methods
-  const handleSelectRepo = async (repo) => {
+  // Handle repository selection
+  const handleSelectRepo = async (repo: Repository | null) => {
     if (repo && username.value) {
-      githubStore.setSelectedRepo(repo)
-      githubStore.resetCommits()
-      await githubStore.fetchCommits(username.value, repo.name, 1)
+      setSelectedRepo(repo);
+      resetCommits();
+      await fetchCommits(username.value, repo.name, 1);
     }
-  }
+  };
 
-  const handleViewDetails = async (commit) => {
-    if (username.value && githubStore.selectedRepo) {
-      await githubStore.fetchCommitDetails(username.value, githubStore.selectedRepo.name, commit.sha)
+  // Handle viewing commit details
+  const handleViewDetails = async (commit: Commit) => {
+    if (username.value && selectedRepo.value) {
+      await fetchCommitDetails(username.value, selectedRepo.value.name, commit.sha);
     }
-  }
+  };
 
-  const handleAddFavorite = (commit) => {
-    if (githubStore.selectedRepo && username.value) {
-      githubStore.addFavorite(commit, githubStore.selectedRepo.name, username.value)
-   }
-  }
-
-  const toggleFavorite = (commit) => {
-    if (favoriteIds.value.has(commit.sha)) {
-      githubStore.removeFavorite(commit.sha)
-    } else {
-      handleAddFavorite(commit)
+  // Handle adding commit to favorites
+  const handleAddFavorite = (commit: Commit) => {
+    if (selectedRepo.value && username.value) {
+      addFavorite(commit, selectedRepo.value.name, username.value);
     }
-  }
+  };
 
+  // Handle loading more commits (pagination)
   const handleLoadMore = () => {
-    if (username.value && githubStore.selectedRepo && !githubStore.loading) {
-      githubStore.fetchCommits(username.value, githubStore.selectedRepo.name, githubStore.currentPage + 1)
+    if (username.value && selectedRepo.value && !loading.value) {
+      fetchCommits(username.value, selectedRepo.value.name, currentPage.value + 1);
     }
-  }
+  };
 
-  // Lifecycle - Fetch repositories when component mounts or username changes
-  watch(
-    username,
-    (newUsername) => {
-      if (newUsername) {
-        githubStore.fetchRepositories(newUsername)
-        githubStore.resetCommits()
-        githubStore.setSelectedRepo(null)
-      }
-    },
-    { immediate: true }
-  )
-
-  onMounted(() => {
-    if (username.value) {
-      githubStore.fetchRepositories(username.value)
-    }
-  })
+  // Watch sortOrder and update store
+  watch(sortOrder, (newOrder) => {
+    setSortOrder(newOrder as SortOrder);
+  });
 </script>
