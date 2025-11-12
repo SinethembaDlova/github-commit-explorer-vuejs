@@ -1,4 +1,4 @@
-<template class9="dark min-h-screen">
+<template class="dark min-h-screen">
   <router-view />
 </template>
 

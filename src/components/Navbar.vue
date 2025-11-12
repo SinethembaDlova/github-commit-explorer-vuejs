@@ -1,37 +1,26 @@
-<script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { ArrowLeft, Github } from 'lucide-vue-next'
-// import { Button } from 'radix-vue'
-
-defineProps<{ username: string }>()
-
-const router = useRouter()
-
-function goBack() {
-  router.push('/')
-}
-</script>
-
 <template>
-  <header class="bg-neutral-900 border-b border-neutral-800 backdrop-blur-md sticky top-0 z-10 shadow-sm">
-    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 text-gray-200">
-      <div class="flex items-center gap-3">
+  <header class="bg-card/95 backdrop-blur-md border-b sticky top-0 z-10 shadow-sm">
+    <div class="container mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5">
+      <div class="flex items-center gap-2 sm:gap-3 md:gap-4">
         <button
-          @click="goBack"
-          class="flex items-center gap-2 hover:bg-neutral-800 rounded-md px-3 py-2 transition"
+          v-if="showBackButton"
+          @click="handleBack"
+          class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-2 sm:px-3"
         >
-          <ArrowLeft class="w-4 h-4 text-gray-400" />
+          <ArrowLeft class="w-4 h-4 sm:mr-2" />
           <span class="hidden sm:inline text-sm">Back</span>
         </button>
-
-        <div class="flex items-center gap-2">
-          <div class="p-2 bg-neutral-800 rounded-md">
-            <Github class="w-5 h-5 text-gray-300" />
+        
+        <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <div class="p-1.5 sm:p-2 bg-primary/10 rounded-lg">
+            <Github class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-primary" />
           </div>
-          <div>
-            <h1 class="text-sm sm:text-base font-medium text-white">{{username}}'s GitHub Repositories</h1>
-            <p class="text-xs text-white-500 hidden sm:block">
-              Explore repositories and commits
+          <div class="min-w-0 flex-1">
+            <h1 class="text-sm sm:text-base md:text-lg lg:text-xl truncate tracking-tight">
+              {{ title }}
+            </h1>
+            <p v-if="subtitle" class="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">
+              {{ subtitle }}
             </p>
           </div>
         </div>
@@ -40,9 +29,33 @@ function goBack() {
   </header>
 </template>
 
-<style scoped>
-/* Optional — for a smooth backdrop */
-header {
-  backdrop-filter: blur(8px);
-}
-</style>
+<script setup lang="ts">
+  import { ArrowLeft, Github } from 'lucide-vue-next';
+  import { useRouter } from 'vue-router';
+
+  interface Props {
+    title: string;
+    subtitle?: string;
+    showBackButton?: boolean;
+    backTo?: string;
+  }
+
+  const props = withDefaults(defineProps<Props>(), {
+    subtitle: '',
+    showBackButton: false,
+    backTo: '/',
+  });
+
+  const emit = defineEmits<{
+    back: [];
+  }>();
+
+  const router = useRouter();
+
+  const handleBack = () => {
+    emit('back');
+    if (props.backTo) {
+      router.push(props.backTo);
+    }
+  };
+</script>
