@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen">
     <!-- Header -->
-    <NavBar
+    <Navbar
       :title="`${username}'s Repositories`"
       subtitle="Explore commits and manage favorites"
       :show-back-button="true"
@@ -167,12 +167,11 @@
 
 <script setup lang="ts">
   import { computed, watch } from 'vue';
-  import { useRoute, useRouter } from 'vue-router'; 
-  import { AlertCircle } from 'lucide-vue-next';
+  import { useRoute } from 'vue-router'; 
+  import { AlertCircle, Github } from 'lucide-vue-next';
   import {
     SelectRoot,
     SelectTrigger,
-    SelectValue,
     SelectContent,
     SelectItem,
   } from 'radix-vue';
@@ -182,11 +181,10 @@
   import RepositoryList from '../components/RepositoryList.vue';
   import CommitList from '../components/CommitList.vue';
   import FavoritesList from '../components/FavoritesList.vue';
-  // import CommitDetails from '../components/CommitDetails.vue';
+  import CommitDetails from '../components/CommitDetails.vue';
   import type { Repository, Commit, SortOrder } from '../types/github';
 
   const route = useRoute();
-  const router = useRouter();
   const githubStore = useGitHubStore();
 
   // Get reactive state from store
